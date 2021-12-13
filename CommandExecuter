@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#reading user inputs
+retry_interval=$3
+retry_number=$5
+shift 5
+command=$*
+
+#runnig the command
+$command 2> /dev/null
+
+#retrying the command if needed.
+if [[ $? -eq 0 ]]; then
+	echo "done successfully. "
+	exit 0
+else
+   for i in `seq $retry_number`; do	
+	sleep $retry_interval
+	echo "retrying"
+	$command 2> /dev/null
+	if [[ $? -eq 0 ]]; then
+		echo "done successfully. "
+		exit 0
+        fi
+   done
+	echo "unable to run the command..." > /dev/stderr
+	exit 1
+fi
+
